@@ -11,6 +11,13 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
+<dependency>
+    <groupId>com.amazonaws</groupId>
+    <artifactId>aws-java-sdk-s3</artifactId>
+    <version>1.12.58</version>
+</dependency>
+
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-core</artifactId>
@@ -106,7 +113,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.emporiaenergy.api.lambda.EmporiaEnergyApiClient</mainClass>
+                                    <mainClass>com.emporiaenergy.api.lambda.LambdaHandler</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
