@@ -46,11 +46,16 @@ MAC/Lunix Instructions
 
 
 
+# CloudFormation Template
 
-aws temp user: 
+## To Create a deployment package
 
-user: java-lambda-developer
+	# Step 1 - Run CloudFormation Package command
+	aws cloudformation package --template-file cf-emporia-client-lambda.yml --output-template-file target/cf-emporia-client-lambda.yml --s3-bucket <YOUR_BUCKET_NAME> --force-upload
 
-password: 1E%]G))&l9zEkgr
+	# Step 2 - Run CloudFormation Deploy command
+	aws cloudformation deploy --template-file target/cf-emporia-client-lambda.yml --stack-name emporia-client-lambda --capabilities CAPABILITY_IAM --parameter-overrides S3BucketName=<YOUR_BUCKET_NAME>
+	
+
 
 
