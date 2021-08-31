@@ -11,6 +11,9 @@ This is a Lambda project with Java Run time
 # Build local
 	- mvn clean package
 
+# run local
+	- java -jar target/emporiaenergy-client-1.0-SNAPSHOT.jar
+
 # Deploy to AWS
 
 	# Step 1 - Run CloudFormation Package command
