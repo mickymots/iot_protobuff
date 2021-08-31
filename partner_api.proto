@@ -1,0 +1,153 @@
+syntax = "proto3";            // doesn't allow for required or optional, see https://developers.google.com/protocol-buffers/docs/proto3
+
+package protos;
+
+option java_multiple_files = true;
+option java_package = "com.emporiaenergy.protos.partnerapi";
+option java_outer_classname = "PartnerApiProto";
+
+// 
+// Supported API calls for partner access to devices and cloud data
+//
+service PartnerApi
+{
+    rpc Authenticate( AuthenticationRequest ) returns ( AuthenticationResponse );
+    rpc GetDevices( DeviceInventoryRequest ) returns ( DeviceInventoryResponse );
+    rpc GetUsageData( DeviceUsageRequest ) returns ( DeviceUsageResponse );
+    rpc GetOutletStatus( DeviceListRequest ) returns ( OutletStatusResponse );
+    rpc SetOutletStatus( OutletStatusRequest ) returns ( OutletStatusResponse );
+}
+
+message AuthenticationRequest
+{
+    string partner_email = 1;
+    string password = 2;
+}
+
+enum ResultStatus
+{
+    VALID = 0;
+    AUTH_INVALID_CREDENTIALS = 1;
+    AUTH_INVALID_TOKEN = 2;
+    AUTH_EXPIRED = 3;
+    INVALID_USAGE_SCALE = 4;
+    INTERNAL_ERROR = 100;
+}
+
+message AuthenticationResponse
+{
+    string auth_token = 1;
+    ResultStatus result_status = 100;
+}
+
+message DeviceInventoryRequest
+{
+    string auth_token = 1;
+}
+
+// get all devices associated with the partner
+message DeviceInventoryResponse
+{
+    // list of devices associated with the partner_gid
+    repeated Device devices = 1;
+
+    message Device
+    { 
+        string manufacturer_device_id = 1;
+        string model = 2;
+        string firmware = 3;
+        string last_app_connect_time = 4;
+        bool solar = 5;
+        double latitude = 6;
+        double longitude = 7;
+        string device_name = 8;
+        repeated CustomerInfo customer_info = 9;
+        repeated string channel_names = 10;
+
+        message CustomerInfo
+        {
+            string first_name = 1;
+            string last_name = 2;
+            string email = 3;
+        }
+    }
+
+    ResultStatus result_status = 100;
+}
+
+enum UsageChannel
+{
+    MAINS = 0;
+    ALL = 1;
+}
+
+// Get historical usage for the specified time range and scale
+// Usage is returned for each of the specified devices
+message DeviceUsageRequest
+{
+    string auth_token = 1;
+
+    // Usage data can be requested for specified time interval range
+    // by specifying start, end and scale.
+    // start and end are specified as seconds since epoch in UTC.
+    // If scale is smaller time unit than the smallest scale for the
+    // interval then usage data will be in smallest supported
+    // scale for the interval.
+    uint64 startEpochSeconds = 2;
+    uint64 endEpochSeconds = 3;
+    // supported scales: '1MIN', '15MIN', '1H', '1D', '1W', '1MON', '1Y'
+    string scale = 4;
+
+    // ALL for usage data for all channels
+    // MAINS for usage data for only Main channels
+    UsageChannel channels = 5;
+
+    // list of device ids
+    repeated string manufacturer_device_id = 6;
+}
+
+message DeviceUsageResponse
+{
+    repeated DeviceUsage device_usage = 1;
+
+    message DeviceUsage
+    {
+        string manufacturer_device_id = 1;
+        string scale = 2;
+        repeated uint64 bucketEpochSeconds = 3;
+        repeated ChannelUsageData channel_usage = 4;
+        
+        message ChannelUsageData
+        {
+            uint32 channel = 1;
+            repeated double usage = 2;
+        }
+    }
+
+    ResultStatus result_status = 100;
+}
+
+message DeviceListRequest
+{
+    string auth_token = 1;
+    repeated string manufacturer_device_id = 2;
+}
+
+message OutletStatusResponse
+{
+    repeated OutletStatus outlet_status = 1;
+    ResultStatus result_status = 100;
+}
+
+message OutletStatus
+{
+    string manufacturer_device_id = 1;
+    bool on = 2;
+}
+
+message OutletStatusRequest
+{
+    string auth_token = 1;
+    repeated OutletStatus outlet_status = 2;
+}
+
