@@ -151,7 +151,7 @@ public class EmporiaEnergyApiClient  {
 
 		} catch (StatusRuntimeException e) {
 			e.printStackTrace();
-			this.write("WARNING: RPC failed: " + e.getMessage());
+			System.out.println("WARNING: RPC failed: " + e.getMessage());
 			return;
 		}
 		finally{

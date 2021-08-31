@@ -21,7 +21,3 @@ This is a Lambda project with Java Run time
 
 	# Step 2 - Run CloudFormation Deploy command
 	aws cloudformation deploy --template-file target/cf-emporia-client-lambda.yml --stack-name emporia-client-lambda --capabilities CAPABILITY_IAM --parameter-overrides S3BucketName=<YOUR_BUCKET_NAME>
-	
-
-
-
