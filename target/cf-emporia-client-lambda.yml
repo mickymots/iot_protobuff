@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Lambda application that calls the Lambda API.
+Parameters:
+  BUCKETNAME:
+    Type: String
+    Description: bucket where the output file and lambda code is saved
+    Default: apskraken
+  FILENAME:
+    Type: String
+    Default: emporiaenergy-lambda-output.txt
+Resources:
+  function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://apskraken/edca7b0443e131acc77f6b50bd8ddbaa
+      Handler: com.emporiaenergy.api.lambda.LambdaHandler::handleRequest
+      Runtime: java8
+      Description: Java function
+      MemorySize: 512
+      Timeout: 300
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AWSLambda_ReadOnlyAccess
+      - AWSXrayWriteOnlyAccess
+      - AWSLambdaVPCAccessExecutionRole
+      - Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - s3:PutObject
+          - s3:PutObjectAcl
+          Resource: arn:aws:s3:::apskraken/*
+      Tracing: Active
+      Environment:
+        Variables:
+          bucket:
+            Ref: BUCKETNAME
+          fileName:
+            Ref: FILENAME
